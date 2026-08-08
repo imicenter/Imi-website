@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SevaSetu — verified public services directory for India" />
+    <title>IMI CENTER | India Public Services</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="IMI CENTER home"><span class="brand-mark">I</span><span>IMI <span class="accent">CENTER</span></span></a>
+      <nav><a href="#services" data-i18n="navServices">Services</a><a href="#help" data-i18n="navHelp">Help</a><a href="dashboard.html">Admin</a></nav>
+      <button class="language" id="languageToggle" type="button">हिंदी</button>
+    </header>
+
+    <main id="home">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow" data-i18n="eyebrow">INDIA'S PUBLIC SERVICE GUIDE</p>
+          <h1 data-i18n="heroTitle">The right service,<br /><em>within reach.</em></h1>
+          <p class="hero-text" data-i18n="heroText">Find verified government and community services for you and your family, in one simple place.</p>
+          <div class="search-box">
+            <label class="search-field"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" data-i18n-placeholder="search" placeholder="Search a service, document or scheme" /></label>
+            <select id="stateFilter" aria-label="Select state"><option value="all" data-i18n="allIndia">All India</option><option value="Delhi">Delhi</option><option value="Maharashtra">Maharashtra</option><option value="Karnataka">Karnataka</option><option value="Uttar Pradesh">Uttar Pradesh</option></select>
+            <button class="primary" id="searchButton" type="button" data-i18n="findServices">Find services</button>
+          </div>
+          <p class="hint" data-i18n="hint">For example: Aadhaar update, scholarship, blood bank</p>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="sun"></div><div class="arch arch-back"></div><div class="arch arch-front"></div>
+          <div class="hero-label"><span>✓</span><div><strong data-i18n="verified">Verified information</strong><small data-i18n="verifiedSub">Official sources, clearly explained</small></div></div>
+        </div>
+      </section>
+
+      <section class="trust-strip"><div><b>6,000+</b><span data-i18n="trustServices">services listed</span></div><div><b>36</b><span data-i18n="trustStates">states & UTs</span></div><div><b>2</b><span data-i18n="trustLang">languages</span></div><div><b>✓</b><span data-i18n="trustVerified">source verified</span></div></section>
+
+      <section class="section categories" id="services">
+        <div class="section-heading"><div><p class="eyebrow" data-i18n="browse">BROWSE BY NEED</p><h2 data-i18n="popular">Popular services</h2></div><button class="text-button" id="clearFilters" type="button" data-i18n="viewAll">View all services →</button></div>
+        <div class="category-grid">
+          <button class="category active" data-category="all"><span class="icon saffron">▦</span><span data-i18n="allServices">All services</span></button>
+          <button class="category" data-category="identity"><span class="icon blue">▣</span><span data-i18n="identity">Identity & documents</span></button>
+          <button class="category" data-category="health"><span class="icon red">✚</span><span data-i18n="health">Health & emergency</span></button>
+          <button class="category" data-category="education"><span class="icon green">⌑</span><span data-i18n="education">Education & skills</span></button>
+          <button class="category" data-category="welfare"><span class="icon purple">◒</span><span data-i18n="welfare">Welfare & support</span></button>
+          <button class="category" data-category="community"><span class="icon teal">♧</span><span data-i18n="community">Community services</span></button>
+        </div>
+      </section>
+
+      <section class="section results-section"><div class="results-meta"><h2 data-i18n="recommended">Recommended for you</h2><span id="resultCount">6 services</span></div><div class="service-grid" id="serviceGrid"></div></section>
+
+      <section class="help-banner" id="help"><div><p class="eyebrow" data-i18n="needHelp">NEED A HAND?</p><h2 data-i18n="helpTitle">Not sure where to begin?</h2><p data-i18n="helpText">Tell us what you need, and we’ll point you to the right service.</p></div><button class="light-button" type="button" data-i18n="getHelp">Get guided help →</button></section>
+    </main>
+    <footer><a class="brand" href="#home"><span class="brand-mark">I</span><span>IMI <span class="accent">CENTER</span></span></a><span data-i18n="footer">Public services, made simpler.</span><span>© 2026 IMI CENTER</span></footer>
+    <script src="app.js"></script>
+  </body>
+</html>
