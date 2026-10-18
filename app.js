@@ -7,7 +7,8 @@ const defaultServices = [
   { name: 'Emergency blood support', hi: 'आपातकालीन रक्त सहायता', category: 'community', state: 'Delhi', desc: 'Locate nearby blood banks and donation support services.', hiDesc: 'पास के ब्लड बैंक और रक्तदान सहायता सेवाएँ खोजें।', type: 'COMMUNITY' },
   { name: 'Jan Aushadhi Kendra', hi: 'जन औषधि केंद्र', category: 'health', state: 'Maharashtra', desc: 'Find quality generic medicines at affordable prices.', hiDesc: 'किफायती कीमतों पर गुणवत्तापूर्ण जेनेरिक दवाएँ पाएँ।', type: 'GOVERNMENT' }
 ];
-let services = JSON.parse(localStorage.getItem('imiServices') || 'null') || defaultServices;
+const SERVICES_STORAGE_KEY = 'sevaSetuServices';
+let services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY) || 'null') || defaultServices;
 if (!services.some(s => s.name === 'Fresh passport application')) services.unshift(defaultServices[0]);
 
 const translations = {
