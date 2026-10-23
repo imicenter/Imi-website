@@ -26,3 +26,4 @@ document.querySelector('#languageToggle').addEventListener('click',()=>{language
 document.querySelector('#searchButton').addEventListener('click',render); input.addEventListener('input',render); state.addEventListener('change',render);
 document.querySelector('#clearFilters').addEventListener('click',()=>{input.value='';state.value='all';selectedCategory='all';document.querySelectorAll('.category').forEach((b,i)=>b.classList.toggle('active',i===0));render();});
 render();
+window.addEventListener('sevaServicesLoaded',render);
