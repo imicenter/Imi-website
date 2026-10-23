@@ -27,3 +27,4 @@ document.querySelector('#searchButton').addEventListener('click',render); input.
 document.querySelector('#clearFilters').addEventListener('click',()=>{input.value='';state.value='all';selectedCategory='all';document.querySelectorAll('.category').forEach((b,i)=>b.classList.toggle('active',i===0));render();});
 render();
 window.addEventListener('sevaServicesLoaded',render);
+document.querySelector('#fontToggle')?.addEventListener('click',()=>{document.body.classList.toggle('large-text');localStorage.setItem('sevaLargeText',document.body.classList.contains('large-text'));});if(localStorage.getItem('sevaLargeText')==='true')document.body.classList.add('large-text');
