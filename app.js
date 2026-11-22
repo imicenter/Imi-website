@@ -11,21 +11,49 @@ const SERVICES_STORAGE_KEY = 'sevaSetuServices';
 let services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY) || 'null') || defaultServices;
 if (!services.some(s => s.name === 'Fresh passport application')) services.unshift(defaultServices[0]);
 
-const translations = {
-  en: { navServices:'Services',navHelp:'Help',eyebrow:"INDIA'S PUBLIC SERVICE GUIDE",heroTitle:'The right service,<br><em>within reach.</em>',heroText:'Find verified government and community services for you and your family, in one simple place.',search:'Search a service, document or scheme',allIndia:'All India',findServices:'Find services',hint:'For example: Aadhaar update, scholarship, blood bank',verified:'Verified information',verifiedSub:'Official sources, clearly explained',trustServices:'services listed',trustStates:'states & UTs',trustLang:'languages',trustVerified:'source verified',browse:'BROWSE BY NEED',popular:'Popular services',viewAll:'View all services →',allServices:'All services',identity:'Identity & documents',health:'Health & emergency',education:'Education & skills',welfare:'Welfare & support',community:'Community services',recommended:'Recommended for you',needHelp:'NEED A HAND?',helpTitle:'Not sure where to begin?',helpText:'Tell us what you need, and we’ll point you to the right service.',getHelp:'Get guided help →',footer:'Public services, made simpler.',learn:'View details →',updated:'Updated recently',none:'No matching service found. Try another search or state.' },
-  hi: { navServices:'सेवाएँ',navHelp:'मदद',eyebrow:'भारत की सार्वजनिक सेवा गाइड',heroTitle:'सही सेवा,<br><em>आपकी पहुँच में।</em>',heroText:'आप और आपके परिवार के लिए सत्यापित सरकारी और सामुदायिक सेवाएँ, एक आसान जगह पर।',search:'सेवा, दस्तावेज़ या योजना खोजें',allIndia:'पूरा भारत',findServices:'सेवाएँ खोजें',hint:'उदाहरण: आधार अपडेट, छात्रवृत्ति, ब्लड बैंक',verified:'सत्यापित जानकारी',verifiedSub:'आधिकारिक स्रोत, आसान भाषा में',trustServices:'सेवाएँ सूचीबद्ध',trustStates:'राज्य व केंद्र शासित प्रदेश',trustLang:'भाषाएँ',trustVerified:'स्रोत सत्यापित',browse:'ज़रूरत के अनुसार खोजें',popular:'लोकप्रिय सेवाएँ',viewAll:'सभी सेवाएँ देखें →',allServices:'सभी सेवाएँ',identity:'पहचान व दस्तावेज़',health:'स्वास्थ्य व आपातकाल',education:'शिक्षा व कौशल',welfare:'कल्याण व सहायता',community:'सामुदायिक सेवाएँ',recommended:'आपके लिए सुझाव',needHelp:'मदद चाहिए?',helpTitle:'समझ नहीं आ रहा कहाँ से शुरू करें?',helpText:'हमें अपनी ज़रूरत बताएँ, हम आपको सही सेवा तक पहुँचाएँगे।',getHelp:'सहायता लें →',footer:'सार्वजनिक सेवाएँ, अब और आसान।',learn:'विवरण देखें →',updated:'हाल ही में अपडेट',none:'कोई मिलती हुई सेवा नहीं मिली। दूसरी खोज या राज्य आज़माएँ।' }
-};
-
-let language = 'en', selectedCategory = 'all', discoveryFilter = '';
-const grid = document.querySelector('#serviceGrid'); const input = document.querySelector('#searchInput'); const state = document.querySelector('#stateFilter');
-function t(key){ return translations[language][key] || key; }
-function render(){ const query = input.value.trim().toLowerCase(); const selectedState = state.value; const shown = services.filter(s => s.status !== 'Draft' && (!discoveryFilter || s.discovery === discoveryFilter) && (selectedCategory === 'all' || s.category === selectedCategory) && (selectedState === 'all' || s.state === selectedState || s.state === 'All India') && (!query || `${s.name} ${s.hi} ${s.desc} ${s.hiDesc}`.toLowerCase().includes(query))); document.querySelector('#resultCount').textContent = `${shown.length} ${language === 'hi' ? 'सेवाएँ' : 'services'}`; grid.innerHTML = shown.length ? shown.map(s => {const detail=s.name==='Aadhaar services'?'service-details.html':s.name==='Fresh passport application'?'passport.html':s.price?'service.html?name='+encodeURIComponent(s.name):'#help';const offer=s.offerPrice&&s.offerPrice<s.price?`<div class="offer-price"><s>₹${s.price}</s> <strong>₹${s.offerPrice}</strong></div>`:'';const coupon=s.coupon?`<small class="coupon-note">Coupon ${s.coupon} · ${s.couponDiscount||0}% off</small>`:'';const label=s.discovery?`<span class="discovery-badge ${s.discovery}">${s.discovery}</span>`:'';const image=s.image?`<img class="service-image" src="${s.image}" alt="${s.name}" loading="lazy">`:'';return `<article class="service-card">${image}${label}<span class="badge">${s.type}</span><h3>${language === 'hi' ? s.hi : s.name}</h3><p>${language === 'hi' ? s.hiDesc : s.desc}</p>${offer}${coupon}<div class="service-footer"><span>${s.state === 'All India' ? t('allIndia') : s.state} · ${t('updated')}</span><a href="${detail}">${s.price?'View service →':t('learn')}</a></div></article>`}).join('') : `<p class="empty">${t('none')}</p>`; }
-function translate(){ document.documentElement.lang = language; document.querySelectorAll('[data-i18n]').forEach(el => { const key=el.dataset.i18n; el.innerHTML=t(key); }); document.querySelectorAll('[data-i18n-placeholder]').forEach(el => el.placeholder=t(el.dataset.i18nPlaceholder)); document.querySelector('#languageToggle').textContent = language === 'en' ? 'हिंदी' : 'English'; render(); }
-document.querySelectorAll('.category').forEach(button => button.addEventListener('click', () => { selectedCategory=button.dataset.category; document.querySelectorAll('.category').forEach(b=>b.classList.toggle('active',b===button)); render(); document.querySelector('.results-section').scrollIntoView({behavior:'smooth',block:'start'}); }));
-document.querySelector('#languageToggle').addEventListener('click',()=>{language=language==='en'?'hi':'en';translate();});
-document.querySelector('#searchButton').addEventListener('click',render); input.addEventListener('input',render); state.addEventListener('change',render);
-document.querySelector('#clearFilters').addEventListener('click',()=>{input.value='';state.value='all';selectedCategory='all';document.querySelectorAll('.category').forEach((b,i)=>b.classList.toggle('active',i===0));render();});
-render();
-window.addEventListener('sevaServicesLoaded',render);
-document.querySelectorAll('[data-discovery]').forEach(link=>link.addEventListener('click',()=>{discoveryFilter=link.dataset.discovery;render();}));
-document.querySelector('#fontToggle')?.addEventListener('click',()=>{document.body.classList.toggle('large-text');localStorage.setItem('sevaLargeText',document.body.classList.contains('large-text'));});if(localStorage.getItem('sevaLargeText')==='true')document.body.classList.add('large-text');
+const SITE=window.IMI_SITE||{};
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const T={hi:{svc:'सेवाएँ',none:'कोई सेवा नहीं मिली। दूसरी खोज आज़माएँ या हमें WhatsApp करें।',view:'विवरण देखें →',order:'विवरण देखें और ऑर्डर करें →',india:'पूरा भारत',gov:'सरकारी',pvt:'गैर-सरकारी',ask:'WhatsApp पर पूछें',fee:'शुल्क',popular:'लोकप्रिय',trending:'ट्रेंडिंग',new:'नया',toEn:'English',wa:'नमस्ते, मुझे इस सेवा की जानकारी चाहिए: '},
+en:{svc:'services',none:'No service found. Try another search or message us on WhatsApp.',view:'View details →',order:'View details & order →',india:'All India',gov:'Government',pvt:'Non-government',ask:'Ask on WhatsApp',fee:'Fee',popular:'Popular',trending:'Trending',new:'New',toEn:'हिंदी',wa:'Hello, I need information about: '}};
+let lang=localStorage.getItem('imiLang')||'hi',cat='all',kind='all';
+const t=k=>T[lang][k];
+const wa=(text='नमस्ते, मुझे जानकारी चाहिए')=>`https://wa.me/${SITE.whatsapp||''}?text=${encodeURIComponent(text)}`;
+const link=s=>s.name==='Aadhaar services'?'service-details.html':s.name==='Fresh passport application'?'passport.html':'service.html?name='+encodeURIComponent(s.name);
+function render(){
+  const q=$('#searchInput').value.trim().toLowerCase(),st=$('#stateFilter').value;
+  const list=services.filter(s=>s.status!=='Draft'&&(cat==='all'||s.category===cat)&&(kind==='all'||(kind==='gov')===(s.type==='GOVERNMENT'))&&(st==='all'||s.state===st||s.state==='All India')&&(!q||`${s.name} ${s.hi} ${s.desc} ${s.hiDesc}`.toLowerCase().includes(q)));
+  $('#resultCount').textContent=`${list.length} ${t('svc')}`;
+  $('#serviceGrid').innerHTML=list.length?list.map(s=>{
+    const name=lang==='hi'?s.hi:s.name,desc=lang==='hi'?s.hiDesc:s.desc,gov=s.type==='GOVERNMENT';
+    const price=s.price?`<div class="price">${s.offerPrice&&s.offerPrice<s.price?`<s>₹${esc(s.price)}</s> <b>₹${esc(s.offerPrice)}</b>`:`<b>₹${esc(s.price)}</b>`}<small>${t('fee')}</small></div>`:'';
+    const tag=s.discovery&&t(s.discovery)?`<span class="tag ${esc(s.discovery)}">${t(s.discovery)}</span>`:'';
+    return `<article class="card">${s.image?`<img src="${esc(s.image)}" alt="${esc(s.name)}" loading="lazy">`:''}<div class="badges"><span class="badge ${gov?'gov':'pvt'}">${gov?t('gov'):t('pvt')}</span>${tag}</div><h3>${esc(name)}</h3><p>${esc(desc)}</p>${price}<div class="card-foot"><a class="more" href="${link(s)}">${s.price?t('order'):t('view')}</a><a class="wa-link" target="_blank" rel="noopener" href="${wa(t('wa')+s.name)}" aria-label="WhatsApp">WhatsApp</a></div></article>`;
+  }).join(''):`<p class="empty">${t('none')}</p>`;
+}
+function applyLang(){
+  document.documentElement.lang=lang;
+  $$('[data-hi]').forEach(el=>{const v=el.dataset[lang];if(v!=null)el.innerHTML=v;});
+  const ph=$('#searchInput');ph.placeholder=ph.dataset[lang==='hi'?'hiPh':'enPh'];
+  $('#langToggle').textContent=t('toEn');render();
+}
+function applyContact(){
+  const ph=SITE.phone||'';
+  $$('[data-call]').forEach(a=>a.href=ph?'tel:+'+ph:'#contact');
+  $$('[data-wa]').forEach(a=>a.href=wa());
+  $$('[data-phone]').forEach(e=>e.textContent=ph?'+'+ph.replace(/^(\d{2})(\d{5})(\d{5})$/,'$1 $2 $3'):'');
+  $$('[data-addr]').forEach(e=>e.textContent=SITE.address||'');
+  $$('[data-hours]').forEach(e=>{e.textContent=SITE.hours||'';e.hidden=!SITE.hours;});
+}
+$$('.cat').forEach(b=>b.onclick=()=>{cat=b.dataset.cat;$$('.cat').forEach(x=>x.classList.toggle('active',x===b));render();});
+$$('.seg button').forEach(b=>b.onclick=()=>{kind=b.dataset.kind;$$('.seg button').forEach(x=>x.classList.toggle('active',x===b));render();});
+$$('.chip').forEach(b=>b.onclick=()=>{$('#searchInput').value=b.dataset.q;render();$('#services').scrollIntoView({behavior:'smooth'});});
+$('#searchBtn').onclick=()=>{render();$('#services').scrollIntoView({behavior:'smooth'});};
+$('#searchInput').addEventListener('input',render);$('#stateFilter').addEventListener('change',render);
+$('#searchInput').addEventListener('keydown',e=>{if(e.key==='Enter'){render();$('#services').scrollIntoView({behavior:'smooth'});}});
+$('#clearBtn').onclick=()=>{$('#searchInput').value='';$('#stateFilter').value='all';cat='all';kind='all';$$('.cat').forEach((b,i)=>b.classList.toggle('active',i===0));$$('.seg button').forEach((b,i)=>b.classList.toggle('active',i===0));render();};
+$('#langToggle').onclick=()=>{lang=lang==='hi'?'en':'hi';localStorage.setItem('imiLang',lang);applyLang();};
+$('#fontToggle').onclick=()=>{document.body.classList.toggle('large');localStorage.setItem('imiLarge',document.body.classList.contains('large'));};
+if(localStorage.getItem('imiLarge')==='true')document.body.classList.add('large');
+window.addEventListener('sevaServicesLoaded',()=>{const f=JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)||'[]');services=f.length?f:defaultServices;if(!services.some(s=>s.name==='Fresh passport application'))services.unshift(defaultServices[0]);render();});
+applyContact();applyLang();
