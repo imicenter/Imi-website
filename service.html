@@ -1,1 +1,78 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Service details | IMI CENTER</title><link rel="stylesheet" href="style.css"><style>.generic-service{max-width:1100px;margin:auto}.generic-hero{display:flex;justify-content:space-between;gap:32px;align-items:flex-start;margin:45px 0 28px}.generic-hero h1{font:700 42px Manrope,sans-serif;margin:10px 0}.lead{font-size:17px;line-height:1.6;color:#66736f;max-width:670px}.service-buy{min-width:260px;background:#fff;border:1px solid #e4e9e5;border-radius:12px;padding:22px}.buy-price{font-size:26px;color:#1b6d59;font-weight:700}.buy-price s{font-size:14px;color:#8a9691;margin-right:6px}.coupon-row{display:flex;gap:7px;margin:18px 0 8px}.coupon-row input{min-width:0;flex:1;padding:10px;border:1px solid #dfe5e1;border-radius:6px}.coupon-row button,.buy-now{border:0;border-radius:6px;padding:10px 13px;background:#1b6d59;color:#fff;font-weight:700;cursor:pointer}.buy-now{width:100%;margin-top:12px;padding:13px}.coupon-msg{font-size:11px;min-height:16px}.service-content{background:#fff;border:1px solid #e4e9e5;border-radius:12px;padding:28px;max-width:760px}.service-content h2{font:700 20px Manrope,sans-serif}.service-content p,.service-content li{color:#66736f;line-height:1.65}.share-actions{display:flex;gap:8px;margin-top:20px}.share-actions button{border:1px solid #cfe0d6;background:#fff;color:#1b6d59;border-radius:6px;padding:9px 12px;cursor:pointer}@media(max-width:760px){.generic-hero{display:block}.service-buy{margin-top:22px}.generic-hero h1{font-size:32px}}</style></head><body><header class="topbar"><a class="brand" href="index.html"><span class="brand-mark">I</span><span>IMI <span class="accent">CENTER</span></span></a><nav><a href="index.html#services">Services</a><a href="index.html#help">Help</a></nav></header><main class="generic-service"><a class="back-link" href="index.html#services">← Back to services</a><section class="generic-hero"><div><p class="eyebrow">SERVICE DETAILS</p><h1 id="title">Service</h1><p class="lead" id="description"></p><div class="share-actions"><button id="shareWhatsApp">WhatsApp</button><button id="shareEmail">Email</button><button id="copyLink">Copy link</button></div></div><aside class="service-buy"><h3>Get this service</h3><div class="buy-price" id="price">₹0</div><div class="coupon-row"><input id="coupon" placeholder="Coupon code"><button id="apply">Apply</button></div><div id="couponMessage" class="coupon-msg"></div><div>Total payable: <strong id="total">₹0</strong></div><button class="buy-now" id="buy">Buy now →</button><p class="note">Secure payment gateway checkout</p></aside></section><section class="service-content"><h2>About this service</h2><p id="about"></p><h2>What you should know</h2><ul><li>Review eligibility and required documents before applying.</li><li>Use the official source wherever an official link is provided.</li><li>Never share OTPs, passwords or sensitive account details.</li></ul></section></main><script src="service.js"></script></body></html>
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Service details | IMI CENTER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="service-details.css">
+<style>
+.buy-card{min-width:270px;max-width:310px;height:max-content;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:22px}
+.buy-card h3{margin:0 0 6px;font-size:16px}
+.buy-price{font:700 30px 'DM Sans',sans-serif;color:var(--deep)}
+.buy-price s{font-size:15px;color:#8a9691;margin-right:6px;font-weight:500}
+.buy-price small{display:block;font:500 13px 'DM Sans','Noto Sans Devanagari',sans-serif;color:var(--muted);margin-top:2px}
+.coupon-row{display:flex;gap:7px;margin:16px 0 6px}
+.coupon-row input{flex:1;padding:10px;border:1px solid var(--line);border-radius:7px;background:#fff;text-transform:uppercase}
+.coupon-row button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:0 13px;font-weight:700;color:var(--ink);cursor:pointer}
+.coupon-msg{font-size:12px;min-height:16px}
+.total-row{display:flex;justify-content:space-between;align-items:center;font-size:14px;margin:10px 0 4px}
+.buy-card .primary{width:100%;margin-top:12px;padding:14px;font-size:15px}
+.buy-card .alt{display:flex;gap:8px;margin-top:10px}
+.buy-card .alt a{flex:1;text-align:center;border:1px solid var(--line);border-radius:7px;padding:10px 6px;font-size:13px;font-weight:700;color:var(--ink);text-decoration:none;background:#fff}
+.buy-note{font-size:12px;color:var(--muted);margin:12px 0 0;line-height:1.5}
+.svc-img{width:100%;max-height:280px;object-fit:cover;border-radius:10px;margin-bottom:24px}
+.content-card h2:not(:first-child){margin-top:26px}.content-card h3{font-size:17px;margin:20px 0 8px}
+.content-card a{color:var(--orange);font-weight:700;text-decoration:none}
+.state-box{max-width:560px;margin:70px auto;text-align:center;color:var(--muted);line-height:1.7}
+.state-box h2{font:400 28px Georgia,'Noto Sans Devanagari',serif;color:var(--ink);margin:0 0 10px}
+.state-box .primary{display:inline-block;margin-top:16px;text-decoration:none}
+.official{display:inline-block;margin-top:6px}
+@media(max-width:780px){.buy-card{max-width:none;margin-top:26px}}
+</style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="index.html" aria-label="IMI CENTER home"><span class="brand-mark">I</span><span>IMI <span class="accent">CENTER</span></span></a><nav><a href="index.html#services" data-i18n="services">Services</a><a href="index.html#help" data-i18n="help">Help</a></nav><button class="language" id="languageToggle" type="button">English</button></header>
+<main class="details-page">
+  <div id="state" class="state-box"><p data-i18n="loading">लोड हो रहा है…</p></div>
+  <div id="page" hidden>
+    <a class="back-link" href="index.html#services" data-i18n="back">← सेवाओं पर वापस जाएँ</a>
+    <section class="details-hero">
+      <div>
+        <p class="eyebrow" id="eyebrow"></p>
+        <h1 id="title"></h1>
+        <p class="lead" id="description"></p>
+        <p class="verified" id="srcLine" hidden><span>✓</span><span id="srcText"></span></p>
+        <div class="share-actions"><button id="shareWhatsApp" type="button">WhatsApp</button><button id="shareEmail" type="button" data-i18n="email">Email</button><button id="copyLink" type="button" data-i18n="copy">Copy link</button></div>
+      </div>
+      <aside class="buy-card">
+        <h3 data-i18n="getTitle">यह सेवा पाएँ</h3>
+        <div class="buy-price" id="price"></div>
+        <div id="couponBox"><div class="coupon-row"><input id="coupon" data-ph-hi="कूपन कोड" data-ph-en="Coupon code" autocomplete="off"><button id="apply" type="button" data-i18n="apply">लागू करें</button></div><div id="couponMessage" class="coupon-msg"></div></div>
+        <div class="total-row" id="totalRow"><span data-i18n="total">कुल राशि</span><strong id="total"></strong></div>
+        <button class="primary" id="buy" type="button"></button>
+        <div class="alt"><a id="askWa" target="_blank" rel="noopener" data-i18n="askWa">WhatsApp पर पूछें</a><a id="callUs" data-i18n="call">कॉल करें</a></div>
+        <p class="buy-note" data-i18n="payNote">अभी भुगतान केंद्र पर होगा। ऑनलाइन भुगतान जल्द शुरू होगा।</p>
+      </aside>
+    </section>
+    <div class="details-grid">
+      <article class="content-card">
+        <img class="svc-img" id="svcImg" alt="" hidden>
+        <section><h2 data-i18n="about">इस सेवा के बारे में</h2><div id="about"></div></section>
+        <section id="docsSec" hidden><h2 data-i18n="docs">ज़रूरी दस्तावेज़</h2><ul id="docs"></ul></section>
+        <section><h2 data-i18n="know">ध्यान रखें</h2><ul><li data-i18n="k1">आवेदन से पहले पात्रता और ज़रूरी दस्तावेज़ जाँच लें।</li><li data-i18n="k2">जहाँ आधिकारिक लिंक दिया हो, वहीं की जानकारी को सही मानें।</li><li data-i18n="k3">किसी को भी अपना OTP, पासवर्ड या खाते की जानकारी न बताएँ।</li></ul></section>
+      </article>
+      <aside class="side-info">
+        <section id="officialSec" hidden><h2 data-i18n="officialT">आधिकारिक स्रोत</h2><p data-i18n="officialP">सबसे नई पात्रता, शुल्क और दस्तावेज़ की जानकारी के लिए आधिकारिक वेबसाइट देखें।</p><a class="primary wide" id="officialLink" target="_blank" rel="noopener" data-i18n="officialBtn">वेबसाइट खोलें ↗</a></section>
+        <section><p class="mini-label" data-i18n="info">सेवा जानकारी</p><dl><div><dt data-i18n="coverage">लागू क्षेत्र</dt><dd id="coverage"></dd></div><div><dt data-i18n="type">प्रकार</dt><dd id="typeVal"></dd></div></dl></section>
+      </aside>
+    </div>
+  </div>
+</main>
+<footer><a class="brand" href="index.html"><span class="brand-mark">I</span><span>IMI <span class="accent">CENTER</span></span></a><span data-i18n="footer">सार्वजनिक सेवाएँ, अब और आसान।</span><span>© 2026 IMI CENTER</span></footer>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script><script src="site-config.js"></script><script src="firebase-data.js"></script>
+<script src="order.js"></script><script src="service.js"></script>
+</body>
+</html>

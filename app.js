@@ -19,7 +19,7 @@ en:{svc:'services',none:'No service found. Try another search or message us on W
 let lang=localStorage.getItem('imiLang')||'hi',cat='all',kind='all';
 const t=k=>T[lang][k];
 const wa=(text='नमस्ते, मुझे जानकारी चाहिए')=>`https://wa.me/${SITE.whatsapp||''}?text=${encodeURIComponent(text)}`;
-const link=s=>s.name==='Aadhaar services'?'service-details.html':s.name==='Fresh passport application'?'passport.html':'service.html?name='+encodeURIComponent(s.name);
+const link=s=>s.name==='Aadhaar services'?'service-details.html':s.name==='Fresh passport application'?'passport.html':(s.id?'service.html?id='+encodeURIComponent(s.id):'service.html?name='+encodeURIComponent(s.name));
 function render(){
   const q=$('#searchInput').value.trim().toLowerCase(),st=$('#stateFilter').value;
   const list=services.filter(s=>s.status!=='Draft'&&(cat==='all'||s.category===cat)&&(kind==='all'||(kind==='gov')===(s.type==='GOVERNMENT'))&&(st==='all'||s.state===st||s.state==='All India')&&(!q||`${s.name} ${s.hi} ${s.desc} ${s.hiDesc}`.toLowerCase().includes(q)));
@@ -28,7 +28,7 @@ function render(){
     const name=lang==='hi'?s.hi:s.name,desc=lang==='hi'?s.hiDesc:s.desc,gov=s.type==='GOVERNMENT';
     const price=s.price?`<div class="price">${s.offerPrice&&s.offerPrice<s.price?`<s>₹${esc(s.price)}</s> <b>₹${esc(s.offerPrice)}</b>`:`<b>₹${esc(s.price)}</b>`}<small>${t('fee')}</small></div>`:'';
     const tag=s.discovery&&t(s.discovery)?`<span class="tag ${esc(s.discovery)}">${t(s.discovery)}</span>`:'';
-    return `<article class="card">${s.image?`<img src="${esc(s.image)}" alt="${esc(s.name)}" loading="lazy">`:''}<div class="badges"><span class="badge ${gov?'gov':'pvt'}">${gov?t('gov'):t('pvt')}</span>${tag}</div><h3>${esc(name)}</h3><p>${esc(desc)}</p>${price}<div class="card-foot"><a class="more" href="${link(s)}">${s.price?t('order'):t('view')}</a><a class="wa-link" target="_blank" rel="noopener" href="${wa(t('wa')+s.name)}" aria-label="WhatsApp">WhatsApp</a></div></article>`;
+    return `<article class="card">${s.image?`<img src="${esc(s.image)}" alt="${esc(s.name)}" loading="lazy">`:''}<div class="badges"><span class="badge ${gov?'gov':'pvt'}">${gov?t('gov'):t('pvt')}</span>${tag}</div><h3>${esc(name)}</h3><p>${esc(desc)}</p>${price}<div class="card-foot"><a class="more" href="${link(s)}">${t('order')}</a><a class="wa-link" target="_blank" rel="noopener" href="${wa(t('wa')+s.name)}" aria-label="WhatsApp">WhatsApp</a></div></article>`;
   }).join(''):`<p class="empty">${t('none')}</p>`;
 }
 function applyLang(){

@@ -21,7 +21,7 @@ function render(){
 table.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;
   if(b.dataset.edit)openEdit(b.dataset.edit);
-  if(b.dataset.link){const s=services.find(x=>x.id===b.dataset.link);const url=location.origin+location.pathname.replace('dashboard.html','')+'service.html?name='+encodeURIComponent(s.name);navigator.clipboard?.writeText(url).then(()=>toast('Link copied'),()=>prompt('Copy link:',url));}
+  if(b.dataset.link){const s=services.find(x=>x.id===b.dataset.link);const url=location.origin+location.pathname.replace('dashboard.html','')+'service.html?id='+encodeURIComponent(s.id);navigator.clipboard?.writeText(url).then(()=>toast('Link copied'),()=>prompt('Copy link:',url));}
   if(b.dataset.del){const s=services.find(x=>x.id===b.dataset.del);if(confirm('Delete “'+s.name+'” permanently?'))col.doc(s.id).delete().then(()=>toast('Deleted')).catch(x=>alert('Delete failed: '+x.code));}
 });
 function openEdit(id){
@@ -46,3 +46,71 @@ form.addEventListener('submit',async e=>{
 $('#downloadData').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(services,null,2)],{type:'application/json'}));a.download='imi-center-services.json';a.click();URL.revokeObjectURL(a.href);};
 const out=()=>firebase.auth().signOut().then(()=>location.reload());
 $('#signOut').onclick=out;$('#signOutMobile').onclick=out;
+
+/* ================= ORDER BOOK ================= */
+const ocol=sevaDb.collection('orders');
+const oTable=$('#orderTable'),oDlg=$('#orderDialog');
+const STATUSES=['New','In progress','Completed','Cancelled'];
+const sKey=s=>String(s||'New').toLowerCase().replace(/\s+/g,'');
+let orders=[],firstOrderLoad=true,openOrderId=null;
+const rupee=n=>'₹'+Number(n||0).toLocaleString('en-IN');
+const fmtDT=d=>d?new Date(d).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}):'–';
+const waNum=m=>'91'+String(m||'').replace(/\D/g,'').slice(-10);
+
+ocol.onSnapshot(snap=>{
+  if(!firstOrderLoad)snap.docChanges().forEach(c=>{if(c.type==='added')toast('New order: '+(c.doc.data().name||'')+' · '+(c.doc.data().serviceName||''));});
+  firstOrderLoad=false;
+  orders=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+  renderOrders();
+  if(openOrderId&&oDlg.open){const o=orders.find(x=>x.id===openOrderId);if(!o)oDlg.close();}
+},err=>{oTable.innerHTML='<tr><td colspan="6">Could not load orders: '+esc(err.code||err.message)+'. Add the “orders” rules in Firestore (see firestore.rules).</td></tr>';});
+
+function renderOrders(){
+  const q=$('#orderSearch').value.trim().toLowerCase(),f=$('#orderStatusFilter').value;
+  const nNew=orders.filter(o=>(o.status||'New')==='New').length;
+  $('#mNewOrders').textContent=nNew;$('#mOrders').textContent=orders.length;
+  const b=$('#newBadge');b.textContent=nNew;b.hidden=!nNew;
+  const list=orders.filter(o=>(f==='all'||(o.status||'New')===f)&&`${o.orderNo} ${o.name} ${o.mobile} ${o.serviceName} ${o.serviceHi||''}`.toLowerCase().includes(q));
+  oTable.innerHTML=list.map(o=>{
+    const st=o.status||'New';
+    const sel=`<select class="st-select s-${sKey(st)}" data-st="${esc(o.id)}">${STATUSES.map(x=>`<option${x===st?' selected':''}>${x}</option>`).join('')}</select>`;
+    const amt=o.total>0?rupee(o.total)+(o.paymentStatus==='Paid'?' <small>Paid</small>':''):'<small>At centre</small>';
+    return `<tr class="${st==='New'?'is-new':''}"><td><strong>${esc(o.orderNo)}</strong><small>${esc(fmtDT(o.createdAt))}</small></td><td><strong>${esc(o.name)}</strong><small><a class="tel" href="tel:+${waNum(o.mobile)}">${esc(o.mobile)}</a></small></td><td>${esc(o.serviceName)}${o.coupon?`<small>Coupon: ${esc(o.coupon)}</small>`:''}</td><td>${amt}</td><td>${sel}</td><td class="row-actions"><button class="edit" data-view="${esc(o.id)}">View</button></td></tr>`;
+  }).join('')||'<tr><td colspan="6">No orders yet. They will appear here when customers order from the site.</td></tr>';
+}
+
+oTable.addEventListener('click',e=>{const b=e.target.closest('button[data-view]');if(b)openOrder(b.dataset.view);});
+oTable.addEventListener('change',e=>{
+  const s=e.target.closest('select[data-st]');if(!s)return;
+  ocol.doc(s.dataset.st).update({status:s.value,updatedAt:new Date().toISOString()}).then(()=>toast('Status: '+s.value)).catch(x=>{alert('Could not update: '+(x.code||x.message));renderOrders();});
+});
+$('#orderSearch').addEventListener('input',renderOrders);$('#orderStatusFilter').addEventListener('change',renderOrders);
+
+function openOrder(id){
+  const o=orders.find(x=>x.id===id);if(!o)return;openOrderId=id;
+  $('#oNo').textContent=o.orderNo||id;$('#oName').textContent=o.name||'–';$('#oMobile').textContent=o.mobile||'–';
+  $('#oAddr').textContent=o.address||'–';$('#oService').textContent=o.serviceName+(o.serviceHi?' ('+o.serviceHi+')':'');
+  $('#oAmount').textContent=o.total>0?rupee(o.total)+(o.coupon?' · coupon '+o.coupon:''):'Fee at centre';
+  $('#oNote').textContent=o.note||'–';$('#oDate').textContent=fmtDT(o.createdAt);$('#oMethod').textContent=o.paymentMethod||'–';
+  $('#oStatus').value=o.status||'New';$('#oPay').value=o.paymentStatus||'Pending';$('#oAdminNote').value=o.adminNote||'';
+  $('#oCall').href='tel:+'+waNum(o.mobile);
+  $('#oWa').href='https://wa.me/'+waNum(o.mobile)+'?text='+encodeURIComponent('नमस्ते '+(o.name||'')+', IMI Center से। आपका ऑर्डर '+o.orderNo+' ('+o.serviceName+') मिल गया है। ');
+  oDlg.showModal();
+}
+$('#oClose').onclick=()=>oDlg.close();
+$('#oSave').onclick=async()=>{
+  const btn=$('#oSave');btn.disabled=true;
+  try{await ocol.doc(openOrderId).update({status:$('#oStatus').value,paymentStatus:$('#oPay').value,adminNote:$('#oAdminNote').value.trim(),updatedAt:new Date().toISOString()});oDlg.close();toast('Order updated');}
+  catch(x){alert('Could not save: '+(x.code||x.message));}
+  btn.disabled=false;
+};
+$('#oDelete').onclick=()=>{
+  const o=orders.find(x=>x.id===openOrderId);if(!o)return;
+  if(confirm('Delete order '+o.orderNo+' permanently?'))ocol.doc(o.id).delete().then(()=>{oDlg.close();toast('Order deleted');}).catch(x=>alert('Delete failed: '+(x.code||x.message)));
+};
+$('#exportOrders').onclick=()=>{
+  const cols=['orderNo','createdAt','name','mobile','address','serviceName','price','coupon','total','status','paymentStatus','paymentMethod','note','adminNote'];
+  const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const csv='\ufeff'+[cols.join(',')].concat(orders.map(o=>cols.map(c=>cell(o[c])).join(','))).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='imi-center-orders.csv';a.click();URL.revokeObjectURL(a.href);
+};
