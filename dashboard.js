@@ -2,7 +2,8 @@ const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pretty={identity:'Identity & documents',health:'Health & emergency',education:'Education & skills',welfare:'Welfare & support',community:'Community services'};
 const col=sevaDb.collection('services');
-const dialog=$('#serviceDialog'),form=$('#serviceForm'),table=$('#serviceTable');
+const form=$('#serviceForm'),table=$('#serviceTable');let editorOpen=false;
+const dialog={showModal(){editorOpen=true;location.hash='#editor';},close(){editorOpen=false;location.hash='#services';}};
 const FIELDS=[['serviceName','name'],['serviceHindi','hi'],['serviceCategory','category'],['serviceState','state'],['serviceDesc','desc'],['serviceHindiDesc','hiDesc'],['serviceLongDesc','longDesc'],['serviceDocuments','documents'],['serviceUrl','url'],['serviceImage','image'],['serviceType','type'],['serviceStatus','status'],['servicePrice','price'],['serviceOfferPrice','offerPrice'],['serviceCoupon','coupon'],['serviceCouponDiscount','couponDiscount'],['serviceDiscovery','discovery'],['serviceViews','views']];
 let services=[];
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
@@ -27,7 +28,7 @@ table.addEventListener('click',e=>{
 function openEdit(id){
   const s=id?services.find(x=>x.id===id):{status:'Published',type:'GOVERNMENT'};
   $('#dialogTitle').textContent=id?'Edit service':'Add a service';$('#editId').value=id||'';
-  FIELDS.forEach(([el,key])=>{$('#'+el).value=s[key]??'';});dialog.showModal();
+  FIELDS.forEach(([el,key])=>{$('#'+el).value=s[key]??'';});RTE.load($('#serviceLongDesc').value);dialog.showModal();
 }
 $('#addService').onclick=()=>openEdit(null);
 $('#tableSearch').addEventListener('input',render);$('#statusFilter').addEventListener('change',render);
@@ -77,6 +78,7 @@ function renderOrders(){
     const amt=o.total>0?rupee(o.total)+(o.paymentStatus==='Paid'?' <small>Paid</small>':''):'<small>At centre</small>';
     return `<tr class="${st==='New'?'is-new':''}"><td><strong>${esc(o.orderNo)}</strong><small>${esc(fmtDT(o.createdAt))}</small></td><td><strong>${esc(o.name)}</strong><small><a class="tel" href="tel:+${waNum(o.mobile)}">${esc(o.mobile)}</a></small></td><td>${esc(o.serviceName)}${o.coupon?`<small>Coupon: ${esc(o.coupon)}</small>`:''}</td><td>${amt}</td><td>${sel}</td><td class="row-actions"><button class="edit" data-view="${esc(o.id)}">View</button></td></tr>`;
   }).join('')||'<tr><td colspan="6">No orders yet. They will appear here when customers order from the site.</td></tr>';
+  $('#recentOrders').innerHTML=orders.slice(0,5).map(o=>`<button type="button" class="recent-row" data-view="${esc(o.id)}"><span><strong>${esc(o.name)}</strong><small>${esc(o.serviceName)}</small></span><span class="status ${sKey(o.status)}">${esc(o.status||'New')}</span><small>${esc(fmtDT(o.createdAt))}</small></button>`).join('')||'<p class="empty">No orders yet.</p>';
 }
 
 oTable.addEventListener('click',e=>{const b=e.target.closest('button[data-view]');if(b)openOrder(b.dataset.view);});
@@ -114,3 +116,85 @@ $('#exportOrders').onclick=()=>{
   const csv='\ufeff'+[cols.join(',')].concat(orders.map(o=>cols.map(c=>cell(o[c])).join(','))).join('\r\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='imi-center-orders.csv';a.click();URL.revokeObjectURL(a.href);
 };
+
+
+/* ================= PAGES (sidebar tabs) ================= */
+const VIEWS=['overview','orders','services','editor'];
+function route(){
+  let v=(location.hash||'#overview').slice(1);if(!VIEWS.includes(v))v='overview';
+  if(v==='editor'&&!editorOpen){location.hash='#services';return;}
+  document.querySelectorAll('.view').forEach(s=>s.hidden=s.id!=='v-'+v);
+  document.querySelectorAll('[data-nav]').forEach(a=>a.classList.toggle('active',a.dataset.nav===(v==='editor'?'services':v)));
+  window.scrollTo(0,0);
+}
+addEventListener('hashchange',route);
+$('#addService2').onclick=()=>openEdit(null);
+$('#cancelEdit').onclick=()=>dialog.close();
+$('#recentOrders').addEventListener('click',e=>{const b=e.target.closest('[data-view]');if(b)openOrder(b.dataset.view);});
+
+/* ================= RICH TEXT EDITOR (saves in the site's simple text format) ================= */
+const RTE=(()=>{
+  const ed=$('#rte'),ta=$('#serviceLongDesc');
+  try{document.execCommand('defaultParagraphSeparator',false,'p');}catch{}
+  const il=s=>esc(s).replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,'<a href="$2">$1</a>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\*([^*]+)\*/g,'<i>$1</i>');
+  function toHtml(md){
+    const out=[];let list='';const close=()=>{if(list){out.push('</'+list+'>');list='';}};
+    String(md||'').split(/\r?\n/).forEach(v=>{
+      const l=v.trim();let m;
+      if(!l){close();return;}
+      if(m=l.match(/^#{1,2} (.*)/)){close();out.push('<h2>'+il(m[1])+'</h2>');}
+      else if(m=l.match(/^[-•] (.*)/)){if(list!=='ul'){close();out.push('<ul>');list='ul';}out.push('<li>'+il(m[1])+'</li>');}
+      else if(m=l.match(/^\d+[.)] (.*)/)){if(list!=='ol'){close();out.push('<ol>');list='ol';}out.push('<li>'+il(m[1])+'</li>');}
+      else if(m=l.match(/^> (.*)/)){close();out.push('<blockquote>'+il(m[1])+'</blockquote>');}
+      else{close();out.push('<p>'+il(l)+'</p>');}
+    });
+    close();return out.join('');
+  }
+  const inl=n=>{
+    if(n.nodeType===3)return n.textContent.replace(/\u00a0/g,' ');
+    if(n.nodeType!==1)return '';
+    const t=[...n.childNodes].map(inl).join('');
+    switch(n.tagName){
+      case 'B':case 'STRONG':return t.trim()?'**'+t.trim()+'** ':t;
+      case 'I':case 'EM':return t.trim()?'*'+t.trim()+'* ':t;
+      case 'A':{const h=n.getAttribute('href')||'';return /^https?:\/\//.test(h)?'['+t+']('+h+')':t;}
+      case 'BR':return ' ';
+      default:return t;
+    }
+  };
+  const one=n=>inl(n).replace(/\s*\n\s*/g,' ').replace(/\s{2,}/g,' ').trim();
+  function toMd(){
+    const out=[];
+    [...ed.childNodes].forEach(n=>{
+      if(n.nodeType===3){const t=n.textContent.trim();if(t)out.push(t);return;}
+      const tag=n.tagName;
+      if(/^H[1-6]$/.test(tag)){const t=one(n);if(t)out.push('# '+t);}
+      else if(tag==='UL'||tag==='OL'){const items=[...n.children].map(one).filter(Boolean).map((t,i)=>(tag==='UL'?'- ':(i+1)+'. ')+t);if(items.length)out.push(items.join('\n'));}
+      else if(tag==='BLOCKQUOTE'){const t=one(n);if(t)out.push('> '+t);}
+      else{const t=one(n);if(t)out.push(t);}
+    });
+    return out.join('\n\n');
+  }
+  const sync=()=>{ta.value=toMd();};
+  const cmd=(c,v)=>{ed.focus();document.execCommand(c,false,v);sync();};
+  const block=t=>cmd('formatBlock',document.queryCommandValue('formatBlock').toLowerCase()===t?'p':t);
+  const tools=$('#rteTools');
+  tools.addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventDefault();});
+  tools.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;const a=b.dataset.cmd;
+    if(a==='h')block('h2');
+    else if(a==='q')block('blockquote');
+    else if(a==='clear'){cmd('removeFormat');cmd('formatBlock','p');}
+    else if(a==='link'){
+      const sel=getSelection();if(!sel.rangeCount||!sel.toString()){toast('Select some text first, then click Link');return;}
+      const r=sel.getRangeAt(0).cloneRange();const u=(prompt('Paste the link (starts with https://)')||'').trim();
+      if(!u)return;if(!/^https?:\/\//.test(u)){toast('Link must start with https://');return;}
+      sel.removeAllRanges();sel.addRange(r);cmd('createLink',u);
+    }
+    else cmd(a);
+  });
+  ed.addEventListener('input',sync);
+  ed.addEventListener('paste',e=>{e.preventDefault();document.execCommand('insertText',false,(e.clipboardData||window.clipboardData).getData('text/plain'));});
+  return{load(md){ed.innerHTML=toHtml(md);ta.value=md||'';}};
+})();
+route();

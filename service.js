@@ -30,18 +30,21 @@ function inline(raw){
   let s=esc(raw);
   s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,(m,a,u)=>hold(`<a href="${u}" target="_blank" rel="noopener">${a} ↗</a>`));
   s=s.replace(/(https?:\/\/[^\s<]+)/g,u=>hold(`<a href="${u}" target="_blank" rel="noopener">${u} ↗</a>`));
+  s=s.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\*([^*]+)\*/g,'<i>$1</i>');
   return s.replace(/\u0000(\d+)\u0000/g,(m,i)=>keep[i]);
 }
 function rich(text){
-  const out=[];let para=[],list=[];
+  const out=[];let para=[],list=[],lt='ul';
   const fp=()=>{if(para.length){out.push(`<p>${para.join(' ')}</p>`);para=[];}};
-  const fl=()=>{if(list.length){out.push(`<ul>${list.join('')}</ul>`);list=[];}};
+  const fl=()=>{if(list.length){out.push(`<${lt}>${list.join('')}</${lt}>`);list=[];}};
   String(text||'').split(/\r?\n/).forEach(v=>{
     const line=v.trim();
     if(!line){fp();fl();return;}
     if(line.startsWith('## ')){fp();fl();out.push(`<h3>${inline(line.slice(3))}</h3>`);}
     else if(line.startsWith('# ')){fp();fl();out.push(`<h3>${inline(line.slice(2))}</h3>`);}
-    else if(/^[-•] /.test(line)){fp();list.push(`<li>${inline(line.replace(/^[-•] /,''))}</li>`);}
+    else if(/^[-•] /.test(line)){fp();if(lt!=='ul')fl();lt='ul';list.push(`<li>${inline(line.replace(/^[-•] /,''))}</li>`);}
+    else if(/^\d+[.)] /.test(line)){fp();if(lt!=='ol')fl();lt='ol';list.push(`<li>${inline(line.replace(/^\d+[.)] /,''))}</li>`);}
+    else if(line.startsWith('> ')){fp();fl();out.push(`<blockquote>${inline(line.slice(2))}</blockquote>`);}
     else if(/:$/.test(line)&&line.length<65){fp();fl();out.push(`<h3>${inline(line.slice(0,-1))}</h3>`);}
     else{fl();para.push(inline(line));}
   });
