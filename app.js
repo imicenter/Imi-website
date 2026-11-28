@@ -14,8 +14,8 @@ if (!services.some(s => s.name === 'Fresh passport application')) services.unshi
 const SITE=window.IMI_SITE||{};
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const T={hi:{svc:'सेवाएँ',none:'कोई सेवा नहीं मिली। दूसरी खोज आज़माएँ या हमें WhatsApp करें।',view:'विवरण देखें →',order:'IMI Center से आवेदन करवाएँ',india:'पूरा भारत',gov:'सरकारी',pvt:'गैर-सरकारी',ask:'WhatsApp पर पूछें',fee:'शुल्क',popular:'लोकप्रिय',trending:'ट्रेंडिंग',new:'नया',toEn:'English',wa:'नमस्ते, मुझे इस सेवा की जानकारी चाहिए: '},
-en:{svc:'services',none:'No service found. Try another search or message us on WhatsApp.',view:'View details →',order:'Apply through IMI Center',india:'All India',gov:'Government',pvt:'Non-government',ask:'Ask on WhatsApp',fee:'Fee',popular:'Popular',trending:'Trending',new:'New',toEn:'हिंदी',wa:'Hello, I need information about: '}};
+const T={hi:{svc:'सेवाएँ',none:'कोई सेवा नहीं मिली। दूसरी खोज आज़माएँ या हमें WhatsApp करें।',view:'विवरण देखें →',order:'विवरण देखें और ऑर्डर करें →',india:'पूरा भारत',gov:'सरकारी',pvt:'गैर-सरकारी',ask:'WhatsApp पर पूछें',fee:'शुल्क',popular:'लोकप्रिय',trending:'ट्रेंडिंग',new:'नया',toEn:'English',wa:'नमस्ते, मुझे इस सेवा की जानकारी चाहिए: '},
+en:{svc:'services',none:'No service found. Try another search or message us on WhatsApp.',view:'View details →',order:'View details & order →',india:'All India',gov:'Government',pvt:'Non-government',ask:'Ask on WhatsApp',fee:'Fee',popular:'Popular',trending:'Trending',new:'New',toEn:'हिंदी',wa:'Hello, I need information about: '}};
 let lang=localStorage.getItem('imiLang')||'hi',cat='all',kind='all';
 const t=k=>T[lang][k];
 const wa=(text='नमस्ते, मुझे जानकारी चाहिए')=>`https://wa.me/${SITE.whatsapp||''}?text=${encodeURIComponent(text)}`;
