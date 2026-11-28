@@ -8,13 +8,13 @@ const T={
 hi:{loading:'लोड हो रहा है…',services:'सेवाएँ',help:'मदद',back:'← सेवाओं पर वापस जाएँ',email:'ईमेल',copy:'लिंक कॉपी करें',copied:'लिंक कॉपी हो गया!',getTitle:'यह सेवा पाएँ',apply:'लागू करें',total:'कुल राशि',askWa:'WhatsApp पर पूछें',call:'कॉल करें',
  payNote:'अभी भुगतान केंद्र पर होगा। ऑनलाइन भुगतान जल्द शुरू होगा।',about:'इस सेवा के बारे में',docs:'ज़रूरी दस्तावेज़',know:'ध्यान रखें',k1:'आवेदन से पहले पात्रता और ज़रूरी दस्तावेज़ जाँच लें।',k2:'जहाँ आधिकारिक लिंक दिया हो, वहीं की जानकारी को सही मानें।',k3:'किसी को भी अपना OTP, पासवर्ड या खाते की जानकारी न बताएँ।',
  officialT:'आधिकारिक स्रोत',officialP:'सबसे नई पात्रता, शुल्क और दस्तावेज़ की जानकारी के लिए आधिकारिक वेबसाइट देखें।',officialBtn:'वेबसाइट खोलें ↗',info:'सेवा जानकारी',coverage:'लागू क्षेत्र',type:'प्रकार',footer:'सार्वजनिक सेवाएँ, अब और आसान।',
- gov:'सरकारी',pvt:'गैर-सरकारी',india:'पूरा भारत',orderPrice:'अभी ऑर्डर करें',orderFree:'यह सेवा माँगें',feeAtCentre:'शुल्क केंद्र पर बताया जाएगा',fee:'सेवा शुल्क',
+ gov:'सरकारी',pvt:'गैर-सरकारी',india:'पूरा भारत',orderPrice:'IMI Center से आवेदन करवाएँ',orderFree:'IMI Center से आवेदन करवाएँ',feeAtCentre:'शुल्क केंद्र पर बताया जाएगा',fee:'सेवा शुल्क',
  couponOk:p=>`कूपन लगा: ${p}% छूट`,couponBad:'कूपन कोड सही नहीं है',couponEmpty:'कूपन कोड लिखें',srcGov:'आधिकारिक सेवा जानकारी',
  nfT:'यह सेवा नहीं मिली',nfP:'हो सकता है यह सेवा हटा दी गई हो या अभी उपलब्ध न हो। आप सीधे हमसे पूछ सकते हैं।',nfBtn:'WhatsApp पर पूछें',waAsk:'नमस्ते, मुझे इस सेवा की जानकारी चाहिए: ',share:'इस सेवा की जानकारी देखें: '},
 en:{loading:'Loading…',services:'Services',help:'Help',back:'← Back to services',email:'Email',copy:'Copy link',copied:'Link copied!',getTitle:'Get this service',apply:'Apply',total:'Total payable',askWa:'Ask on WhatsApp',call:'Call us',
  payNote:'Pay at the centre for now. Online payment is coming soon.',about:'About this service',docs:'Required documents',know:'What you should know',k1:'Review eligibility and required documents before applying.',k2:'Use the official source wherever an official link is provided.',k3:'Never share OTPs, passwords or sensitive account details.',
  officialT:'Official source',officialP:'Check the official website for the latest eligibility, fee and document requirements.',officialBtn:'Open website ↗',info:'SERVICE INFORMATION',coverage:'Coverage',type:'Type',footer:'Public services, made simpler.',
- gov:'Government',pvt:'Non-government',india:'All India',orderPrice:'Order now',orderFree:'Request this service',feeAtCentre:'Fee will be told at the centre',fee:'Service fee',
+ gov:'Government',pvt:'Non-government',india:'All India',orderPrice:'Apply through IMI Center',orderFree:'Apply through IMI Center',feeAtCentre:'Fee will be told at the centre',fee:'Service fee',
  couponOk:p=>`Coupon applied: ${p}% off`,couponBad:'Invalid coupon code',couponEmpty:'Enter a coupon code',srcGov:'Official service information',
  nfT:'Service not found',nfP:'This service may have been removed or is not available right now. You can ask us directly.',nfBtn:'Ask on WhatsApp',waAsk:'Hello, I need information about this service: ',share:'See this service: '}
 };
@@ -78,7 +78,7 @@ function paintPrice(){
   $('#couponBox').hidden=!(base>0&&svc.coupon);
   $('#totalRow').hidden=base<=0;
   $('#total').textContent=money(total);
-  $('#buy').textContent=base>0?`${t('orderPrice')} →`:`${t('orderFree')} →`;
+  $('#buy').textContent=base>0?t('orderPrice'):t('orderFree');
 }
 
 function paint(){
