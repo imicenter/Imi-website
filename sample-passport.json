@@ -1,0 +1,59 @@
+{
+  "name": "Fresh passport application",
+  "hi": "नया पासपोर्ट आवेदन",
+  "category": "identity",
+  "state": "All India",
+  "desc": "A simple guide to the official process for applying for your first ordinary passport in India.",
+  "hiDesc": "भारत में अपना पहला साधारण पासपोर्ट बनाने की आधिकारिक प्रक्रिया की आसान गाइड।",
+  "longDesc": [
+    "# Before you begin",
+    "A fresh passport is for someone who is applying for an ordinary passport for the first time. Use only the official Passport Seva portal for registration, application, payment and appointment booking.",
+    "",
+    "# Fee",
+    "**From ₹2,500** for a 36-page, 10-year ordinary passport. The correct fee depends on your category and application type; check the official calculator before payment.",
+    "[Calculate official fee](https://www.passportindia.gov.in/psp/FeeCalculator)",
+    "",
+    "# How to apply",
+    "1. **Register on Passport Seva.** Create an account with your email address on the official portal, then sign in. [Open Passport Seva portal](https://www.passportindia.gov.in/)",
+    "2. **Fill the fresh passport application.** From the Services section, choose “Apply for Fresh Passport/Re-issue of Passport” and complete the online form carefully.",
+    "3. **Pay and book an appointment.** Pay the applicable fee online and choose a Passport Seva Kendra or Post Office Passport Seva Kendra appointment. [Read official application steps](https://www.passportindia.gov.in/psp/Apply)",
+    "4. **Visit the selected centre.** Carry your appointment confirmation and required original documents with self-attested photocopies.",
+    "5. **Track your application.** Use the official portal to check application status after submission.",
+    "",
+    "> Never share your Passport Seva password with anyone.",
+    "",
+    "[Check official Document Advisor](https://www.passportindia.gov.in/psp/docAdvisor/attachmentAdvFreshInp)"
+  ],
+  "longDescHi": [
+    "# शुरू करने से पहले",
+    "नया पासपोर्ट उस व्यक्ति के लिए है जो पहली बार साधारण पासपोर्ट के लिए आवेदन कर रहा है। रजिस्ट्रेशन, आवेदन, भुगतान और अपॉइंटमेंट के लिए केवल आधिकारिक पासपोर्ट सेवा पोर्टल का उपयोग करें।",
+    "",
+    "# शुल्क",
+    "36-पेज, 10-वर्ष के साधारण पासपोर्ट के लिए **₹2,500 से शुरू**। सही शुल्क आपकी श्रेणी और आवेदन प्रकार पर निर्भर करता है; भुगतान से पहले आधिकारिक कैलकुलेटर देखें।",
+    "[आधिकारिक शुल्क जाँचें](https://www.passportindia.gov.in/psp/FeeCalculator)",
+    "",
+    "# आवेदन कैसे करें",
+    "1. **पासपोर्ट सेवा पर रजिस्टर करें।** आधिकारिक पोर्टल पर अपने ईमेल पते से अकाउंट बनाएँ और साइन इन करें। [पासपोर्ट सेवा पोर्टल खोलें](https://www.passportindia.gov.in/)",
+    "2. **नया पासपोर्ट आवेदन भरें।** Services सेक्शन में “Apply for Fresh Passport/Re-issue of Passport” चुनें और ऑनलाइन फॉर्म सावधानी से भरें।",
+    "3. **भुगतान करें और अपॉइंटमेंट बुक करें।** लागू शुल्क ऑनलाइन भरें और पासपोर्ट सेवा केंद्र या पोस्ट ऑफिस पासपोर्ट सेवा केंद्र की अपॉइंटमेंट चुनें। [आधिकारिक आवेदन चरण देखें](https://www.passportindia.gov.in/psp/Apply)",
+    "4. **चुने हुए केंद्र पर जाएँ।** अपॉइंटमेंट पुष्टि और जरूरी मूल दस्तावेज़ों के साथ स्वयं-सत्यापित फोटोकॉपी ले जाएँ।",
+    "5. **आवेदन की स्थिति देखें।** जमा करने के बाद स्थिति जाँचने के लिए आधिकारिक पासपोर्ट सेवा पोर्टल का उपयोग करें।",
+    "",
+    "> अपना पासपोर्ट सेवा पासवर्ड किसी को न दें।",
+    "",
+    "[आधिकारिक दस्तावेज़ सलाहकार देखें](https://www.passportindia.gov.in/psp/docAdvisor/attachmentAdvFreshInp)"
+  ],
+  "documents": [
+    "Proof of present address",
+    "Proof of date of birth",
+    "Original documents and one set of self-attested photocopies for your appointment"
+  ],
+  "documentsHi": [
+    "वर्तमान पते का प्रमाण",
+    "जन्म तिथि का प्रमाण",
+    "अपॉइंटमेंट के लिए मूल दस्तावेज़ और उनकी स्वयं-सत्यापित फोटोकॉपी का एक सेट"
+  ],
+  "url": "https://www.passportindia.gov.in/",
+  "type": "GOVERNMENT",
+  "status": "Draft"
+}

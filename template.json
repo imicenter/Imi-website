@@ -1,0 +1,36 @@
+{
+  "name": "",
+  "hi": "",
+  "category": "identity | health | education | welfare | community",
+  "state": "All India",
+  "desc": "",
+  "hiDesc": "",
+  "longDesc": [
+    "# Heading",
+    "Paragraph text",
+    "- bullet",
+    "1. numbered step",
+    "> note",
+    "[link text](https://official-link)"
+  ],
+  "longDescHi": [
+    "# हेडिंग",
+    "..."
+  ],
+  "documents": [
+    "one document per line"
+  ],
+  "documentsHi": [
+    "..."
+  ],
+  "url": "https://official-site",
+  "image": "",
+  "type": "GOVERNMENT | COMMUNITY",
+  "status": "Draft | Published",
+  "price": 0,
+  "offerPrice": 0,
+  "coupon": "",
+  "couponDiscount": 0,
+  "discovery": "popular | trending | new | (empty)",
+  "views": 0
+}
