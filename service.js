@@ -128,10 +128,25 @@ function bind(){
 }
 
 paint();
-load().then(s=>{
-  if(!s){notFound();return;}
-  svc=s;base=Number(s.offerPrice&&s.offerPrice<s.price?s.offerPrice:s.price)||0;total=base;
+/* open instantly from the copy the home page already saved, then refresh quietly from Firestore */
+let bound=false,shown=false;
+function show(s){
+  svc=s;base=Number(s.offerPrice&&s.offerPrice<s.price?s.offerPrice:s.price)||0;total=base;coupon='';
   $('#state').hidden=true;$('#page').hidden=false;
-  bind();paint();
-});
+  if(!bound){bind();bound=true;}
+  paint();shown=true;
+}
+const q0=new URLSearchParams(location.search),c0=cached(q0.get('id'),q0.get('name'));
+if(c0&&c0.status!=='Draft')show(c0);
+let started=false;
+function startFresh(){
+  if(started||!window.sevaDb)return;started=true;
+  load().then(s=>{
+    if(!s){if(shown){$('#page').hidden=true;$('#state').hidden=false;}notFound();return;}
+    show(s);
+  });
+}
+window.imiStartFresh=startFresh;      /* called by service.html as soon as Firebase is ready */
+window.addEventListener('load',startFresh);
+startFresh();
 })();
