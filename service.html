@@ -7,8 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="service-details.css">
 <style>
-.buy-card{min-width:270px;max-width:310px;height:max-content;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:22px}
-.buy-card h3{margin:0 0 6px;font-size:16px}
+.buy-card h2{margin:0 0 6px}
 .buy-price{font:700 30px 'DM Sans',sans-serif;color:var(--deep)}
 .buy-price s{font-size:15px;color:#8a9691;margin-right:6px;font-weight:500}
 .buy-price small{display:block;font:500 13px 'DM Sans','Noto Sans Devanagari',sans-serif;color:var(--muted);margin-top:2px}
@@ -28,7 +27,9 @@
 .state-box h2{font:400 28px Georgia,'Noto Sans Devanagari',serif;color:var(--ink);margin:0 0 10px}
 .state-box .primary{display:inline-block;margin-top:16px;text-decoration:none}
 .official{display:inline-block;margin-top:6px}
-@media(max-width:780px){.buy-card{max-width:none;margin-top:26px}}
+.guide-cover{background:#1b6d59;gap:11px}.guide-cover span{font:700 10px 'DM Sans',sans-serif;letter-spacing:1.4px}
+.guide-cover b{font:400 17px/1.25 Georgia,'Noto Sans Devanagari',serif;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.guide-cover small{font:700 8px 'DM Sans',sans-serif;letter-spacing:.8px;margin-top:auto}
 </style>
 </head>
 <body>
@@ -45,15 +46,7 @@
         <p class="verified" id="srcLine" hidden><span>✓</span><span id="srcText"></span></p>
         <div class="share-actions"><button id="shareWhatsApp" type="button">WhatsApp</button><button id="shareEmail" type="button" data-i18n="email">Email</button><button id="copyLink" type="button" data-i18n="copy">Copy link</button></div>
       </div>
-      <aside class="buy-card">
-        <h3 data-i18n="getTitle">यह सेवा पाएँ</h3>
-        <div class="buy-price" id="price"></div>
-        <div id="couponBox"><div class="coupon-row"><input id="coupon" data-ph-hi="कूपन कोड" data-ph-en="Coupon code" autocomplete="off"><button id="apply" type="button" data-i18n="apply">लागू करें</button></div><div id="couponMessage" class="coupon-msg"></div></div>
-        <div class="total-row" id="totalRow"><span data-i18n="total">कुल राशि</span><strong id="total"></strong></div>
-        <button class="primary" id="buy" type="button"></button>
-        <div class="alt"><a id="askWa" target="_blank" rel="noopener" data-i18n="askWa">WhatsApp पर पूछें</a><a id="callUs" data-i18n="call">कॉल करें</a></div>
-        <p class="buy-note" data-i18n="payNote">अभी भुगतान केंद्र पर होगा। ऑनलाइन भुगतान जल्द शुरू होगा।</p>
-      </aside>
+      <div class="passport-visual guide-visual" aria-hidden="true"><div class="passport-cover guide-cover"><span>IMI CENTER</span><b id="coverName"></b><small id="coverCat"></small><i>✦</i></div><span class="visual-note" data-i18n="visualNote">आवेदन से पहले आपकी गाइड</span></div>
     </section>
     <div class="details-grid">
       <article class="content-card">
@@ -63,6 +56,15 @@
         <section><h2 data-i18n="know">ध्यान रखें</h2><ul><li data-i18n="k1">आवेदन से पहले पात्रता और ज़रूरी दस्तावेज़ जाँच लें।</li><li data-i18n="k2">जहाँ आधिकारिक लिंक दिया हो, वहीं की जानकारी को सही मानें।</li><li data-i18n="k3">किसी को भी अपना OTP, पासवर्ड या खाते की जानकारी न बताएँ।</li></ul></section>
       </article>
       <aside class="side-info">
+        <section class="buy-card">
+        <h2 data-i18n="getTitle">यह सेवा पाएँ</h2>
+        <div class="buy-price" id="price"></div>
+        <div id="couponBox"><div class="coupon-row"><input id="coupon" data-ph-hi="कूपन कोड" data-ph-en="Coupon code" autocomplete="off"><button id="apply" type="button" data-i18n="apply">लागू करें</button></div><div id="couponMessage" class="coupon-msg"></div></div>
+        <div class="total-row" id="totalRow"><span data-i18n="total">कुल राशि</span><strong id="total"></strong></div>
+        <button class="primary" id="buy" type="button"></button>
+        <div class="alt"><a id="askWa" target="_blank" rel="noopener" data-i18n="askWa">WhatsApp पर पूछें</a><a id="callUs" data-i18n="call">कॉल करें</a></div>
+        <p class="buy-note" data-i18n="payNote">अभी भुगतान केंद्र पर होगा। ऑनलाइन भुगतान जल्द शुरू होगा।</p>
+      </section>
         <section id="officialSec" hidden><h2 data-i18n="officialT">आधिकारिक स्रोत</h2><p data-i18n="officialP">सबसे नई पात्रता, शुल्क और दस्तावेज़ की जानकारी के लिए आधिकारिक वेबसाइट देखें।</p><a class="primary wide" id="officialLink" target="_blank" rel="noopener" data-i18n="officialBtn">वेबसाइट खोलें ↗</a></section>
         <section><p class="mini-label" data-i18n="info">सेवा जानकारी</p><dl><div><dt data-i18n="coverage">लागू क्षेत्र</dt><dd id="coverage"></dd></div><div><dt data-i18n="type">प्रकार</dt><dd id="typeVal"></dd></div></dl></section>
       </aside>
