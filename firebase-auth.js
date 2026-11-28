@@ -13,5 +13,5 @@ function showLogin(){
 auth.onAuthStateChanged(user=>{
   if(!user)return showLogin();
   if(loaded)return;loaded=true;document.body.style.visibility='';
-  const s=document.createElement('script');s.src='dashboard.js';document.body.appendChild(s);
+  const s=document.createElement('script');s.src='dashboard.js?v='+Date.now();document.body.appendChild(s);
 });
