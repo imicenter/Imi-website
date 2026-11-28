@@ -95,8 +95,9 @@ function paint(){
   $('#srcLine').hidden=!gov;$('#srcText').textContent=t('srcGov');
   $('#typeVal').textContent=gov?t('gov'):t('pvt');
   $('#coverage').textContent=!svc.state||svc.state==='All India'?t('india'):svc.state;
-  $('#about').innerHTML=rich(svc.longDesc)||`<p>${esc(ds)}</p>`;
-  const docs=String(svc.documents||'').split(/\r?\n/).map(x=>x.trim().replace(/^[-•]\s*/,'')).filter(Boolean);
+  const long=lang==='hi'&&svc.longDescHi?svc.longDescHi:svc.longDesc;
+  $('#about').innerHTML=rich(long)||`<p>${esc(ds)}</p>`;
+  const docs=String(lang==='hi'&&svc.documentsHi?svc.documentsHi:(svc.documents||'')).split(/\r?\n/).map(x=>x.trim().replace(/^[-•]\s*/,'')).filter(Boolean);
   $('#docsSec').hidden=!docs.length;$('#docs').innerHTML=docs.map(d=>`<li>${esc(d)}</li>`).join('');
   const url=/^https?:\/\//.test(svc.url||'')?svc.url:'';
   $('#officialSec').hidden=!url;if(url)$('#officialLink').href=url;

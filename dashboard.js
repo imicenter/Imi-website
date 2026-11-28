@@ -4,7 +4,7 @@ const pretty={identity:'Identity & documents',health:'Health & emergency',educat
 const col=sevaDb.collection('services');
 const form=$('#serviceForm'),table=$('#serviceTable');let editorOpen=false;
 const dialog={showModal(){editorOpen=true;location.hash='#editor';},close(){editorOpen=false;location.hash='#services';}};
-const FIELDS=[['serviceName','name'],['serviceHindi','hi'],['serviceCategory','category'],['serviceState','state'],['serviceDesc','desc'],['serviceHindiDesc','hiDesc'],['serviceLongDesc','longDesc'],['serviceDocuments','documents'],['serviceUrl','url'],['serviceImage','image'],['serviceType','type'],['serviceStatus','status'],['servicePrice','price'],['serviceOfferPrice','offerPrice'],['serviceCoupon','coupon'],['serviceCouponDiscount','couponDiscount'],['serviceDiscovery','discovery'],['serviceViews','views']];
+const FIELDS=[['serviceName','name'],['serviceHindi','hi'],['serviceCategory','category'],['serviceState','state'],['serviceDesc','desc'],['serviceHindiDesc','hiDesc'],['serviceLongDesc','longDesc'],['serviceLongDescHi','longDescHi'],['serviceDocuments','documents'],['serviceDocumentsHi','documentsHi'],['serviceUrl','url'],['serviceImage','image'],['serviceType','type'],['serviceStatus','status'],['servicePrice','price'],['serviceOfferPrice','offerPrice'],['serviceCoupon','coupon'],['serviceCouponDiscount','couponDiscount'],['serviceDiscovery','discovery'],['serviceViews','views']];
 let services=[];
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 const slug=n=>n.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'service-'+Date.now();
@@ -36,7 +36,7 @@ form.addEventListener('submit',async e=>{
   if(e.submitter?.value==='cancel')return;
   e.preventDefault();
   const num=id=>Number($('#'+id).value)||0;
-  const obj={name:$('#serviceName').value.trim(),hi:$('#serviceHindi').value.trim(),category:$('#serviceCategory').value,state:$('#serviceState').value,desc:$('#serviceDesc').value.trim(),hiDesc:$('#serviceHindiDesc').value.trim(),longDesc:$('#serviceLongDesc').value,documents:$('#serviceDocuments').value,url:$('#serviceUrl').value.trim(),image:$('#serviceImage').value.trim(),type:$('#serviceType').value,status:$('#serviceStatus').value,price:num('servicePrice'),offerPrice:num('serviceOfferPrice'),coupon:$('#serviceCoupon').value.trim().toUpperCase(),couponDiscount:num('serviceCouponDiscount'),discovery:$('#serviceDiscovery').value,views:num('serviceViews'),updatedAt:new Date().toISOString()};
+  const obj={name:$('#serviceName').value.trim(),hi:$('#serviceHindi').value.trim(),category:$('#serviceCategory').value,state:$('#serviceState').value,desc:$('#serviceDesc').value.trim(),hiDesc:$('#serviceHindiDesc').value.trim(),longDesc:$('#serviceLongDesc').value,longDescHi:$('#serviceLongDescHi').value,documents:$('#serviceDocuments').value,documentsHi:$('#serviceDocumentsHi').value,url:$('#serviceUrl').value.trim(),image:$('#serviceImage').value.trim(),type:$('#serviceType').value,status:$('#serviceStatus').value,price:num('servicePrice'),offerPrice:num('serviceOfferPrice'),coupon:$('#serviceCoupon').value.trim().toUpperCase(),couponDiscount:num('serviceCouponDiscount'),discovery:$('#serviceDiscovery').value,views:num('serviceViews'),updatedAt:new Date().toISOString()};
   let id=$('#editId').value;
   if(!id){id=slug(obj.name);if(services.some(s=>s.id===id))id+='-'+Date.now();}
   const btn=$('#saveService');btn.disabled=true;btn.textContent='Saving…';
@@ -197,4 +197,88 @@ const RTE=(()=>{
   ed.addEventListener('paste',e=>{e.preventDefault();document.execCommand('insertText',false,(e.clipboardData||window.clipboardData).getData('text/plain'));});
   return{load(md){ed.innerHTML=toHtml(md);ta.value=md||'';}};
 })();
+
+/* ================= JSON IMPORT ================= */
+const IMP_CATS=[...$('#serviceCategory').options].map(o=>o.value);
+const IMP_STATES=[...$('#serviceState').options].map(o=>o.value);
+const impDlg=$('#importDialog'),impText=$('#impText'),impMsg=$('#impMsg');
+const impSay=(m,c)=>{impMsg.textContent=m;impMsg.className='imp-msg '+(c||'');};
+const impLines=v=>Array.isArray(v)?v.map(x=>String(x).replace(/^[-•]\s*/,'').trim()).filter(Boolean).join('\n'):String(v??'').trim();
+const impText2=v=>Array.isArray(v)?v.join('\n'):String(v??'');
+
+/* one JSON object -> the same shape the form saves. Only keys present in the JSON are returned. */
+function impNormalize(raw){
+  const o={},w=[];
+  if(!raw||typeof raw!=='object'||Array.isArray(raw))return{o,w,err:'Each service must be a JSON object { ... }.'};
+  const has=k=>raw[k]!==undefined&&raw[k]!==null&&raw[k]!=='';
+  ['name','hi','desc','hiDesc','url','image','discovery'].forEach(k=>{if(has(k))o[k]=String(raw[k]).trim();});
+  ['longDesc','longDescHi'].forEach(k=>{if(has(k))o[k]=impText2(raw[k]).trim();});
+  ['documents','documentsHi'].forEach(k=>{if(has(k))o[k]=impLines(raw[k]);});
+  ['price','offerPrice','couponDiscount','views'].forEach(k=>{if(has(k)){const n=Number(raw[k]);if(Number.isFinite(n)&&n>=0)o[k]=n;else w.push(k+' must be a number');}});
+  if(has('coupon'))o.coupon=String(raw.coupon).trim().toUpperCase();
+  if(has('category')){const c=String(raw.category).toLowerCase().trim();if(IMP_CATS.includes(c))o.category=c;else w.push('category "'+raw.category+'" not valid (use '+IMP_CATS.join(', ')+')');}
+  if(has('state')){const st=IMP_STATES.find(x=>x.toLowerCase()===String(raw.state).toLowerCase().trim());if(st)o.state=st;else w.push('state "'+raw.state+'" is not in the Coverage list');}
+  if(has('type')){const t=String(raw.type).toUpperCase().trim();if(['GOVERNMENT','COMMUNITY'].includes(t))o.type=t;else w.push('type must be GOVERNMENT or COMMUNITY');}
+  if(has('status')){const t=String(raw.status).toLowerCase().trim();if(t==='published')o.status='Published';else if(t==='draft')o.status='Draft';else w.push('status must be Published or Draft');}
+  if(o.url&&!/^https?:\/\//.test(o.url)){w.push('url must start with https://');delete o.url;}
+  if(o.image&&!/^https?:\/\//.test(o.image)){w.push('image must start with https://');delete o.image;}
+  if(o.discovery&&!['popular','trending','new'].includes(o.discovery)){w.push('discovery must be popular, trending or new');delete o.discovery;}
+  if(o.offerPrice&&o.price&&o.offerPrice>=o.price)w.push('offerPrice should be lower than price');
+  if(!o.name)return{o,w,err:'"name" is required.'};
+  ['hi','desc','hiDesc'].forEach(k=>{if(!o[k])w.push('"'+k+'" is empty (the form needs it before saving)');});
+  return{o,w};
+}
+function impParse(txt){
+  txt=txt.trim().replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'');
+  if(!txt)throw new Error('Paste some JSON first.');
+  let j;try{j=JSON.parse(txt);}catch(e){throw new Error('This is not valid JSON: '+e.message);}
+  if(j&&!Array.isArray(j)&&Array.isArray(j.services))j=j.services;
+  return j;
+}
+function impOpen(){impText.value='';$('#impFile').value='';impSay('');impDlg.showModal();}
+function impFill(o){
+  /* fill the editor with the imported values; untouched fields keep their current value */
+  if(!editorOpen||location.hash!=='#editor'){openEdit(null);}
+  const sameId=slug(o.name);
+  if(!$('#editId').value&&services.some(s=>s.id===sameId)){
+    const cur=services.find(s=>s.id===sameId);
+    FIELDS.forEach(([el,key])=>{$('#'+el).value=cur[key]??'';});
+    $('#editId').value=sameId;$('#dialogTitle').textContent='Edit service';
+    toast('A service with this name exists — updating it');
+  }
+  FIELDS.forEach(([el,key])=>{if(o[key]!==undefined)$('#'+el).value=o[key];});
+  RTE.load($('#serviceLongDesc').value);
+}
+async function impRun(){
+  let j;try{j=impParse(impText.value);}catch(e){impSay(e.message,'err');return;}
+  const list=Array.isArray(j)?j:[j];
+  if(!list.length){impSay('The list is empty.','err');return;}
+  const res=list.map((x,i)=>({i,...impNormalize(x)}));
+  const bad=res.filter(r=>r.err);
+  if(bad.length){impSay(bad.map(r=>'Item '+(r.i+1)+': '+r.err).join('\n'),'err');return;}
+  if(!Array.isArray(j)){
+    impFill(res[0].o);impDlg.close();
+    toast(res[0].w.length?'Form filled — check: '+res[0].w.join('; '):'Form filled — review and press Save');
+    return;
+  }
+  const ids=res.map(r=>slug(r.o.name)),dupInFile=ids.find((x,i)=>ids.indexOf(x)!==i);
+  if(dupInFile){impSay('Two services in the list have the same name ("'+dupInFile+'").','err');return;}
+  const upd=ids.filter(id=>services.some(s=>s.id===id)).length;
+  const warn=res.filter(r=>r.w.length).map(r=>'• '+r.o.name+': '+r.w.join('; ')).join('\n');
+  if(!confirm('Save '+res.length+' services ('+(res.length-upd)+' new, '+upd+' will be updated)?\nNew ones without a status are saved as Draft.'+(warn?'\n\nCheck:\n'+warn:'')))return;
+  const btn=$('#impGo');btn.disabled=true;impSay('Saving…');
+  try{
+    for(let k=0;k<res.length;k+=400){
+      const b=sevaDb.batch();
+      res.slice(k,k+400).forEach((r,n)=>{const id=ids[k+n];const isNew=!services.some(s=>s.id===id);b.set(col.doc(id),{...(isNew?{status:'Draft',type:'GOVERNMENT',category:'identity',state:'All India'}:{}),...r.o,id,updatedAt:new Date().toISOString()},{merge:true});});
+      await b.commit();
+    }
+    impDlg.close();toast(res.length+' services saved');location.hash='#services';
+  }catch(e){impSay('Could not save: '+(e.code||e.message)+'\nCheck that you are logged in and Firestore rules allow admin writes.','err');}
+  btn.disabled=false;
+}
+$('#importJson').onclick=impOpen;$('#importJson2').onclick=impOpen;
+$('#impClose').onclick=$('#impCancel').onclick=()=>impDlg.close();
+$('#impGo').onclick=impRun;
+$('#impFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{impText.value=String(r.result||'');impSay('File loaded — press Import.','ok');};r.readAsText(f);});
 route();

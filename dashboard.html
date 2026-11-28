@@ -30,12 +30,12 @@
 <div class="content-section"><div class="controls toolbar"><label class="table-search"><input id="orderSearch" type="search" placeholder="Search name, mobile, order no."></label><select id="orderStatusFilter"><option value="all">All statuses</option><option>New</option><option>In progress</option><option>Completed</option><option>Cancelled</option></select><button class="outline" id="exportOrders" type="button">Export CSV</button></div>
 <div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Service</th><th>Amount</th><th>Status</th><th></th></tr></thead><tbody id="orderTable"><tr><td colspan="6">Loading…</td></tr></tbody></table></div></div></section>
 
-<section class="view" id="v-services" hidden><div class="view-head"><div><h1>Services &amp; content</h1><p>Changes save to Firebase and show on the public site.</p></div><div class="header-actions"><button class="add-button" id="addService" type="button"><svg class="ic"><use href="#i-plus"/></svg>Add service</button></div></div>
+<section class="view" id="v-services" hidden><div class="view-head"><div><h1>Services &amp; content</h1><p>Changes save to Firebase and show on the public site.</p></div><div class="header-actions"><button class="outline" id="importJson" type="button">Import JSON</button><button class="add-button" id="addService" type="button"><svg class="ic"><use href="#i-plus"/></svg>Add service</button></div></div>
 <div class="content-section"><div class="controls toolbar"><label class="table-search"><input id="tableSearch" type="search" placeholder="Search services"></label><select id="statusFilter"><option value="all">All statuses</option><option value="Published">Published</option><option value="Draft">Draft</option></select><button class="outline" id="downloadData" type="button">Export backup</button></div>
 <div class="table-wrap"><table><thead><tr><th>Service</th><th>Category</th><th>Price</th><th>Updated</th><th>Status</th><th></th></tr></thead><tbody id="serviceTable"><tr><td colspan="6">Loading…</td></tr></tbody></table></div></div></section>
 
 <section class="view" id="v-editor" hidden><form id="serviceForm" autocomplete="off"><input id="editId" type="hidden">
-<div class="editor-bar"><div><button class="back" id="cancelEdit" type="button">← Services</button><h1 id="dialogTitle">Add a service</h1></div><div class="header-actions"><button class="save" id="saveService" type="submit">Save service</button></div></div>
+<div class="editor-bar"><div><button class="back" id="cancelEdit" type="button">← Services</button><h1 id="dialogTitle">Add a service</h1></div><div class="header-actions"><button class="outline" id="importJson2" type="button">Import JSON</button><button class="save" id="saveService" type="submit">Save service</button></div></div>
 <div class="editor-grid"><div class="col">
 <div class="card"><h3>Basics</h3><div class="form-grid">
 <label>Service name (English)<input id="serviceName" required placeholder="e.g. PAN card"></label>
@@ -47,7 +47,8 @@
 <div class="card"><h3>Full details</h3><p class="hint">Write like a document. Select text and use the toolbar for headings, bold, lists and links.</p>
 <div class="rte-tools" id="rteTools"><button type="button" data-cmd="h" title="Heading">Heading</button><button type="button" data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button><button type="button" data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button><button type="button" data-cmd="insertUnorderedList" title="Bullet list">• List</button><button type="button" data-cmd="insertOrderedList" title="Numbered list">1. List</button><button type="button" data-cmd="q" title="Quote / note">Quote</button><button type="button" data-cmd="link" title="Add link">Link</button><button type="button" data-cmd="unlink" title="Remove link">Unlink</button><button type="button" data-cmd="clear" title="Clear formatting">Clear</button></div>
 <div id="rte" contenteditable="true" data-ph="Start writing the full details here…"></div><textarea id="serviceLongDesc" hidden></textarea></div>
-<div class="card"><h3>Required documents</h3><p class="hint">One document per line.</p><label><textarea id="serviceDocuments" rows="5"></textarea></label></div></div>
+<div class="card"><h3>पूरी जानकारी (Hindi)</h3><p class="hint">Hindi visitors will see this. Same format: <code># Heading</code>, <code>- bullet</code>, <code>1. step</code>, <code>[text](https://link)</code>. Leave empty to show the English text.</p><label><textarea id="serviceLongDescHi" class="md-area" rows="10"></textarea></label></div>
+<div class="card"><h3>Required documents</h3><p class="hint">One document per line.</p><label>English<textarea id="serviceDocuments" rows="5"></textarea></label><label>हिंदी (optional)<textarea id="serviceDocumentsHi" rows="5"></textarea></label></div></div>
 <div class="col side">
 <div class="card"><h3>Publishing</h3><div class="stack">
 <label>Status<select id="serviceStatus"><option value="Published">Published</option><option value="Draft">Draft</option></select></label>
@@ -68,6 +69,11 @@
 <dl class="o-grid"><div><dt>Customer</dt><dd id="oName"></dd></div><div><dt>Mobile</dt><dd id="oMobile"></dd></div><div class="full"><dt>Address</dt><dd id="oAddr"></dd></div><div><dt>Service</dt><dd id="oService"></dd></div><div><dt>Amount</dt><dd id="oAmount"></dd></div><div class="full"><dt>Customer note</dt><dd id="oNote"></dd></div><div><dt>Placed</dt><dd id="oDate"></dd></div><div><dt>Payment method</dt><dd id="oMethod"></dd></div></dl>
 <div class="form-grid"><label>Order status<select id="oStatus"><option>New</option><option>In progress</option><option>Completed</option><option>Cancelled</option></select></label><label>Payment<select id="oPay"><option>Pending</option><option>Paid</option></select></label><label class="full">Internal note (customer cannot see)<textarea id="oAdminNote" placeholder="e.g. documents received, token no."></textarea></label></div>
 <div class="form-actions"><a class="cancel o-link" id="oCall">Call</a><a class="cancel o-link" id="oWa" target="_blank" rel="noopener">WhatsApp</a><button class="cancel danger-btn" id="oDelete" type="button">Delete</button><button class="save" id="oSave" type="button">Save</button></div></div></dialog>
+<dialog id="importDialog"><div class="order-view import-view"><div class="dialog-head"><div><p class="mini-title">IMPORT</p><h2>Import service JSON</h2></div><button class="close" id="impClose" type="button">×</button></div>
+<p class="hint">Paste the JSON or choose a .json file. <b>One service</b> fills the form so you can check it before saving. <b>A list of services</b> is saved straight away (as Draft unless the JSON says otherwise).</p>
+<input id="impFile" type="file" accept=".json,application/json"><textarea id="impText" spellcheck="false" placeholder='{ "name": "PAN card", "hi": "पैन कार्ड", ... }'></textarea>
+<div id="impMsg" class="imp-msg" aria-live="polite"></div>
+<div class="form-actions"><button class="cancel" id="impCancel" type="button">Cancel</button><button class="save" id="impGo" type="button">Import</button></div></div></dialog>
 <div id="toast" class="toast"></div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
